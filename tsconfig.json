@@ -1,0 +1,58 @@
+{
+  "compileOnSave": true,
+  //  "ts-node": {
+  //    "compilerOptions": {
+  //      "module": "Node16"
+  //    }
+  //  },
+  "compilerOptions": {
+    "lib": [
+      "ES6",
+      "DOM"
+    ],
+    "target": "es5",
+    "noImplicitAny": true,
+    "importHelpers": true,
+    "downlevelIteration": true,
+    "outDir": "lib",
+    "stripInternal": true,
+    "inlineSources": false,
+    "inlineSourceMap": false,
+    "forceConsistentCasingInFileNames": true,
+    "strictNullChecks": false,
+    "skipLibCheck": true,
+    "alwaysStrict": false,
+    "allowJs": true,
+    "module": "commonjs",
+    //    "moduleResolution": "Node16",
+    "newLine": "LF",
+    "pretty": false,
+    "removeComments": false,
+    "sourceMap": false,
+    "noImplicitReturns": true,
+    "noUnusedLocals": false,
+    "strict": true,
+    "declaration": false,
+    "esModuleInterop": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "rootDir": "src",
+    "baseUrl": "./",
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "types": [
+      "node",
+      "jasmine",
+      "pg"
+    ]
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
+}
