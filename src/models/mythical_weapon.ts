@@ -1,7 +1,7 @@
 import Client from '../database';
 
 export type MythicalWeapon = {
-    id: number;
+    id?: number;
     name: string;
     type: string;
     weight: number;

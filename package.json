@@ -15,7 +15,7 @@
     "eslint": "eslint",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "test": "ENV=test && npm run compile && db-migrate --env test up && ENV=test jasmine && db-migrate db:drop test",
+    "test": "ENV=test && npm run compile && db-migrate --env test reset && db-migrate --env test up && ENV=test jasmine && db-migrate --env test reset",
     "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "author": "Udacity",
