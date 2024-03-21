@@ -1,8 +1,8 @@
-import {MythicalWeapon, MythicalWeaponStore} from '../../models/mythical_weapon';
+import {Product, ProductStore} from '../../models/product';
 
-const store = new MythicalWeaponStore();
+const store = new ProductStore();
 
-describe('Mythical Weapon Model', () => {
+describe('Product Model', () => {
   it('should have an index method', () => {
     expect(store.index).toBeDefined();
   });
@@ -32,10 +32,9 @@ describe('Mythical Weapon Model', () => {
   });
 
   it('create method should add a product', async () => {
-    const item: MythicalWeapon = {
-      name: 'Excalibur',
-      type: 'Sword',
-      weight: 100,
+    const item: Product = {
+      name: 'Test Product',
+      price: 1000,
     };
     const result = await store.create(item);
     expect(result).toEqual({
@@ -47,23 +46,31 @@ describe('Mythical Weapon Model', () => {
     const result = await store.index();
     expect(result).toEqual([{
       id: 1,
-      name: 'Excalibur',
-      type: 'Sword',
-      weight: 100,
+      name: 'Test Product',
+      price: 1000,
     }]);
   });
   it('show method should return the correct product', async () => {
-    const result = await store.show("1");
+    const result = await store.show(1);
     expect(result).toEqual({
       id: 1,
-      name: 'Excalibur',
-      type: 'Sword',
-      weight: 100,
+      name: 'Test Product',
+      price: 1000,
     });
   });
-  // delete
+  it('update method should update the product', async () => {
+    const item: Product = {
+      name: 'Test Product Updated',
+      price: 2000,
+    };
+    const result = await store.update(1, item);
+    expect(result).toEqual({
+      id: 1,
+      ...item,
+    });
+  });
   it('delete method should remove the product', async () => {
-    await store.delete("1");
+    await store.delete(1);
     const result = await store.index();
     expect(result).toEqual([]);
   });
