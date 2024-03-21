@@ -19,7 +19,7 @@ const index = async (_req: Request, res: Response) => {
 
 const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await store.show(req.params.id);
+    const user = await store.show(parseInt(req.params.id));
     res.json(user);
   } catch (err) {
     next(err);
@@ -29,8 +29,8 @@ const show = async (req: Request, res: Response, next: NextFunction) => {
 const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user: User = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
       password: req.body.password,
     };
     let newUser = await store.create(user);
@@ -52,8 +52,8 @@ const destroy = async (req: Request, res: Response, next: NextFunction) => {
 const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user: User = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
       password: req.body.password,
     };
     const updated = await store.update(parseInt(req.params.id), user);
