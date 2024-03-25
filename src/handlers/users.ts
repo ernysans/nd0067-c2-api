@@ -55,8 +55,9 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
       first_name: req.body.first_name,
       last_name: req.body.last_name,
       password: req.body.password,
+      id: parseInt(req.params.id),
     };
-    const updated = await store.update(parseInt(req.params.id), user);
+    const updated = await store.update(user);
     res.json(updated);
   } catch (err) {
     next(err);

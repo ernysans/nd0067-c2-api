@@ -55,17 +55,17 @@ export class UserStore {
     conn.release();
   }
 
-  async update(id: number, u: User): Promise<User> {
-    if (!id) throw new Error('id is required');
+  async update(u: User): Promise<User> {
+    if (!u.id) throw new Error('id is required');
     if (!u.first_name) throw new Error('first_name is required');
     if (!u.last_name) throw new Error('last_name is required');
     const conn = await Client.connect();
     const sql = 'UPDATE users SET first_name = $1, last_name = $2 WHERE id=($3) RETURNING id, first_name, last_name';
-    const values: any[] = [u.first_name, u.last_name, id];
+    const values: any[] = [u.first_name, u.last_name, u.id];
     const result = await conn.query(sql, values);
     conn.release();
     const user = result.rows[0] as User;
-    if (!user) throw new Error(`user ${id} not found`);
+    if (!user) throw new Error(`user ${u.id} not found`);
     return user;
   }
 

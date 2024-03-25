@@ -61,21 +61,21 @@ export class ProductStore {
     }
   }
 
-  async update(id: number, mw: Product): Promise<Product> {
-    if (!id) throw new Error('id is required');
+  async update(mw: Product): Promise<Product> {
+    if (!mw.id) throw new Error('id is required');
     if (!mw.name) throw new Error('name is required');
     if (!mw.price) throw new Error('type is required');
     try {
       const sql = 'UPDATE products SET name = $1, price = $2 WHERE id = $3 RETURNING *';
-      const values: any[] = [mw.name, mw.price, id];
+      const values: any[] = [mw.name, mw.price, mw.id];
       const conn = await Client.connect();
       const result = await conn.query(sql, values);
       conn.release();
       let item = result.rows[0];
-      if (!item) throw new Error(`Could not find ${id}`);
+      if (!item) throw new Error(`Could not find ${mw.id}`);
       return item;
     } catch (err) {
-      throw new Error(`Could not update product ${id}. Error: ${err}`);
+      throw new Error(`Could not update product ${mw.id}. Error: ${err}`);
     }
   }
 }

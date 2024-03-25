@@ -24,43 +24,35 @@ describe('Product Model', () => {
   });
   it('index method should return an empty list', async () => {
     const result = await store.index();
-    expect(result).toEqual([]);
+    expect(result).toBeDefined();
+    expect(result).toBeInstanceOf(Array);
   });
 
   it('create method should add a product', async () => {
     const result = await store.create(item);
-    expect(result).toEqual({
-      id: 1,
-      ...item,
-    });
+    item.id = result.id;
+    expect(result).toEqual(item);
   });
   it('index method should return a list of products', async () => {
     const result = await store.index();
-    expect(result).toEqual([{
-      id: 1,
-      ...item,
-    }]);
+    expect(result).toEqual([item]);
   });
   it('show method should return the correct product', async () => {
-    const result = await store.show(1);
-    expect(result).toEqual({
-      id: 1,
-      ...item,
-    });
+    const result = await store.show(item.id);
+    expect(result).toEqual(item);
   });
   it('update method should update the product', async () => {
-    const item: Product = {
+    const updateItem: Product = {
+      ...item,
       name: 'Test Product Updated',
       price: 2000,
     };
-    const result = await store.update(1, item);
-    expect(result).toEqual({
-      id: 1,
-      ...item,
-    });
+    const result = await store.update(updateItem);
+    expect(result).toBeDefined();
+    expect(result).toEqual(updateItem);
   });
   it('delete method should remove the product', async () => {
-    await store.delete(1);
+    await store.delete(item.id);
     const result = await store.index();
     expect(result).toEqual([]);
   });

@@ -1,5 +1,5 @@
 import express, {NextFunction, Request, Response} from "express";
-import {ProductStore} from "../models/product";
+import {Product, ProductStore} from "../models/product";
 import {verifyAuthToken} from "../middleware";
 
 const router = express.Router()
@@ -41,7 +41,12 @@ const _delete = async (req: Request, res: Response, next: NextFunction) => {
 const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = req.body;
-    const updated = await store.update(parseInt(req.params.id), data);
+    const product: Product = {
+      id: parseInt(req.params.id),
+      name: data.name,
+      price: data.price,
+    }
+    const updated = await store.update(product);
     res.json(updated);
   } catch (error) {
     next(error);
