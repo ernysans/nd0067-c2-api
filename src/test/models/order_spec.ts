@@ -2,25 +2,27 @@ import {Order, OrderStatus, OrderStore} from '../../models/order';
 import {User, UserStore} from "../../models/user";
 
 const store = new OrderStore();
+const userStore = new UserStore();
 describe('Order Model', () => {
   let item: Order = {
+    id: null,
     user_id: null,
     status: OrderStatus.Open,
   };
+  const password = 'password123';
+  let user: User = {
+    first_name: 'Test',
+    last_name: 'User',
+    password,
+  };
   beforeAll(async () => {
-    const userStore = new UserStore();
-    const password = 'password123';
-    const user: User = {
-      first_name: 'Test',
-      last_name: 'User',
-      password,
-    };
     const result = await userStore.create(user);
+    user.id = result.id;
     item.user_id = result.id;
   });
   afterAll(async () => {
     const userStore = new UserStore();
-    await userStore.delete(item.user_id);
+    await userStore.delete(user.id);
   });
 
   it('should have an index method', () => {
@@ -51,11 +53,11 @@ describe('Order Model', () => {
   });
   it('index method should return a list of orders', async () => {
     const result = await store.index();
-    expect(result).toEqual([item]);
+    expect(result).toContain(item);
   });
 
   it('show method should return the correct order', async () => {
-    const result = await store.show(1);
+    const result = await store.show(item.id);
     expect(result).toBeDefined();
     expect(result).toEqual(item);
   });
@@ -72,7 +74,9 @@ describe('Order Model', () => {
 
   it('delete method should remove the order', async () => {
     await store.delete(item.id);
-    const result = await store.index();
+    let result = await store.index();
+    // Filter by id and compare as empty array
+    result = result.filter((i) => i.id === item.id);
     expect(result).toEqual([]);
   });
 });

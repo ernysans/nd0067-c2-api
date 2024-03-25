@@ -27,7 +27,6 @@ describe('Product Model', () => {
     expect(result).toBeDefined();
     expect(result).toBeInstanceOf(Array);
   });
-
   it('create method should add a product', async () => {
     const result = await store.create(item);
     item.id = result.id;
@@ -35,7 +34,7 @@ describe('Product Model', () => {
   });
   it('index method should return a list of products', async () => {
     const result = await store.index();
-    expect(result).toEqual([item]);
+    expect(result).toContain(item);
   });
   it('show method should return the correct product', async () => {
     const result = await store.show(item.id);
@@ -53,7 +52,9 @@ describe('Product Model', () => {
   });
   it('delete method should remove the product', async () => {
     await store.delete(item.id);
-    const result = await store.index();
+    let result = await store.index();
+    // Filter by id and compare as empty array
+    result = result.filter((i) => i.id === item.id);
     expect(result).toEqual([]);
   });
 });

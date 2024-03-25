@@ -9,7 +9,6 @@ const saltRounds = process.env.SALT_ROUNDS as string;
 describe('User Model', () => {
   const store = new UserStore();
   const password = 'password123';
-  let id: number = 1;
   const item: User = {
     first_name: 'Test',
     last_name: 'User',
@@ -39,19 +38,16 @@ describe('User Model', () => {
     const result = await store.create({
       ...item, password,
     });
-    id = result.id;
-    expect(result).toEqual({id, ...item});
+    item.id = result.id;
+    expect(result).toEqual(item);
   });
 
   it('index method should return a list of users', async () => {
     const result = await store.index();
-    expect(result).toEqual([{
-      id,
-      ...item,
-    }]);
+    expect(result).toContain(item);
   });
   it('show method should return the correct user', async () => {
-    const result = await store.show(id);
+    const result = await store.show(item.id);
     expect(result).toBeDefined();
     expect(result.first_name).toBe(item.first_name);
     expect(result.last_name).toBe(item.last_name);
@@ -60,30 +56,29 @@ describe('User Model', () => {
     expect(store.authenticate).toBeDefined();
   });
   it('authenticate method should return the user if password is correct', async () => {
-    const result = await store.authenticate(id, password);
+    const result = await store.authenticate(item.id, password);
     expect(result).toBeDefined();
-    expect(result).toEqual({
-      id,
-      ...item,
-    });
+    expect(result).toEqual(item);
   });
   it('authenticate method should return null if password is incorrect', async () => {
-    const result = await store.authenticate(id, 'wrongpassword');
+    const result = await store.authenticate(item.id, 'wrongpassword');
     expect(result).toBeNull();
   });
   it('update method should update the user', async () => {
-    const item: User = {
-      id,
+    const itemUpdate: User = {
+      id: item.id,
       first_name: 'New First Name',
       last_name: 'New Last Name',
     };
-    const result = await store.update(item);
-    expect(result).toEqual(item);
+    const result = await store.update(itemUpdate);
+    expect(result).toEqual(itemUpdate);
   });
 
   it('delete method should remove the user', async () => {
-    await store.delete(id);
-    const result = await store.index();
+    await store.delete(item.id);
+    let result = await store.index();
+    // Filter by id and compare as empty array
+    result = result.filter((i) => i.id === item.id);
     expect(result).toEqual([]);
   });
 });

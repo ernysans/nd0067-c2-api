@@ -41,7 +41,7 @@ export class UserStore {
       parseInt(saltRounds)
     );
     const result = await conn.query(sql, [u.first_name, u.last_name, hash]);
-    let user = result.rows[0];
+    const user = result.rows[0];
     conn.release();
     if (!user) throw new Error('user not created');
     return user;

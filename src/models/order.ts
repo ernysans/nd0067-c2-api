@@ -43,8 +43,8 @@ export class OrderStore {
     if (!o.user_id) throw new Error('user_id is required');
     if (!o.status) throw new Error('status is required');
     try {
-      const sql = 'INSERT INTO orders (user_id, status) VALUES($1, $2) RETURNING *';
-      const values: any[] = [o.user_id, o.status];
+      const sql = 'INSERT INTO orders (status, user_id) VALUES($1, $2) RETURNING *';
+      const values: any[] = [o.status, o.user_id];
       const conn = await Client.connect();
       const result = await conn.query(sql, values);
       conn.release();
@@ -76,7 +76,7 @@ export class OrderStore {
       const values: any[] = [o.user_id, o.status, o.id];
       const result = await conn.query(sql, values);
       conn.release();
-      let item = result.rows[0];
+      const item = result.rows[0] as Order;
       if (!item) throw new Error(`Could not find ${o.id}`);
       return item;
     } catch (err) {
