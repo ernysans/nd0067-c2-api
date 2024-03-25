@@ -64,6 +64,17 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await store.authenticate(parseInt(req.body.id), req.body.password);
+    let token = jwt.sign({user: user}, process.env.TOKEN_SECRET);
+    res.json(token);
+  } catch (err) {
+    next(err);
+  }
+};
+
+router.post('/authenticate', authenticate);
 router.get('/', verifyAuthToken, index);
 router.get('/:id', verifyAuthToken, show);
 router.post('/', create);

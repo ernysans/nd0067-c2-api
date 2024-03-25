@@ -127,6 +127,7 @@ export class UserStore {
    * @returns {Promise<User | null>}
    */
   async authenticate(id: number, password: string): Promise<User | null> {
+    if (!id) throw new Error('id is required');
     if (!password) throw new Error('password is required');
     const conn = await Client.connect();
     const sql = 'SELECT id, first_name, last_name, password FROM users WHERE id=($1)';
