@@ -1,6 +1,8 @@
 import {NextFunction, Request, Response} from "express";
 import jwt from "jsonwebtoken";
+import {User, UserStore} from "./models/user";
 
+const userStore = new UserStore();
 export const getToken = (request: Request) => {
   let token: string | null = null;
   if (!request.headers.authorization) throw new Error('Unauthorized. Token is missing');
@@ -9,13 +11,32 @@ export const getToken = (request: Request) => {
 };
 
 export const decodeToken = (token: string) => {
-  return jwt.decode(token);
+  return jwt.decode(token, {
+    json: true,
+  });
 }
 
-export const verifyAuthToken = (request: Request, response: Response, next: NextFunction) => {
+/**
+ * Return User object from token
+ * @param request
+ * @return User
+ */
+export const userFromToken = (request: Request): User => {
+  const decoded = decodeToken(getToken(request));
+  if (!decoded) throw new Error('Unauthorized. Token is invalid');
+  if (decoded['user'] === undefined) throw new Error('Unauthorized. Token is invalid, the user is not found.');
+  return decoded['user'] as User;
+}
+
+export const verifyAuthToken = async (request: Request, response: Response, next: NextFunction) => {
   try {
     const token = getToken(request);
     jwt.verify(token, process.env.TOKEN_SECRET);
+    /// Check if user data is on the token
+    const user = userFromToken(request);
+    if (!user) throw new Error('Unauthorized. User not found');
+    /// Check if user exists in the database
+    await userStore.show(user.id);
     next();
   } catch (error) {
     response.status(401).json({error: 'Unauthorized'});

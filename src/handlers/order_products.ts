@@ -1,10 +1,11 @@
 import express, {NextFunction, Request, Response} from "express";
-import {Product, ProductStore} from "../models/product";
+import {OrderProduct, OrderProductStore} from "../models/order_product";
 import {verifyAuthToken} from "../middleware";
 
 const router = express.Router()
 
-const store = new ProductStore();
+const store = new OrderProductStore();
+
 const index = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const results = await store.index();
@@ -33,7 +34,7 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
 const _delete = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await store.delete(parseInt(req.params.id));
-    res.json({message: `Product ${req.params.id} deleted`});
+    res.json({message: `Order Product ${req.params.id} deleted`});
   } catch (error) {
     next(error);
   }
@@ -41,7 +42,7 @@ const _delete = async (req: Request, res: Response, next: NextFunction) => {
 const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = req.body;
-    const product: Product = {
+    const product: OrderProduct = {
       ...data,
       id: parseInt(req.params.id),
     }
@@ -60,4 +61,3 @@ router.delete('/:id', _delete);
 router.put('/:id', update);
 
 export default router;
-

@@ -43,8 +43,8 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
 
 const destroy = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const deleted = await store.delete(parseInt(req.params.id));
-    res.json(deleted);
+    await store.delete(parseInt(req.params.id));
+    res.json({message: `User ${req.params.id} deleted`});
   } catch (err) {
     next(err);
   }
@@ -64,9 +64,9 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-router.get('/', index);
-router.get('/:id', show);
-router.post('/', verifyAuthToken, create);
+router.get('/', verifyAuthToken, index);
+router.get('/:id', verifyAuthToken, show);
+router.post('/', create);
 router.delete('/:id', verifyAuthToken, destroy);
 router.put('/:id', verifyAuthToken, update);
 export default router;

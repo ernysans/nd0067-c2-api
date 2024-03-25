@@ -1,3 +1,5 @@
+import Client from '../database';
+
 export type OrderProduct = {
   id?: number;
   order_id: number;
@@ -5,7 +7,6 @@ export type OrderProduct = {
   quantity: number;
 }
 
-import Client from '../database';
 
 export class OrderProductStore {
   async index(): Promise<OrderProduct[]> {
