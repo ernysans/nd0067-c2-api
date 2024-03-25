@@ -1,12 +1,19 @@
 import Client from '../database';
 
-export type Product = {
+export interface Product {
   id?: number;
   name: string;
   price: number;
-};
+}
 
+/**
+ * ProductStore is a class with methods to access the products table in the database.
+ */
 export class ProductStore {
+  /**
+   * Get all products
+   * @returns {Promise<Product[]>}
+   */
   async index(): Promise<Product[]> {
     try {
       const conn = await Client.connect();
@@ -19,6 +26,11 @@ export class ProductStore {
     }
   }
 
+  /**
+   * Get a product by id
+   * @param id
+   * @returns {Promise<Product>}
+   */
   async show(id: number): Promise<Product> {
     if (!id) throw new Error('id is required');
     try {
@@ -34,12 +46,17 @@ export class ProductStore {
     }
   }
 
-  async create(mw: Product): Promise<Product> {
-    if (!mw.name) throw new Error('name is required');
-    if (!mw.price) throw new Error('price is required');
+  /**
+   * Create a new product
+   * @param product
+   * @returns {Promise<Product>}
+   */
+  async create(product: Product): Promise<Product> {
+    if (!product.name) throw new Error('name is required');
+    if (!product.price) throw new Error('price is required');
     try {
       const sql = 'INSERT INTO products (name, price) VALUES($1, $2) RETURNING *';
-      const values: any[] = [mw.name, mw.price];
+      const values: any[] = [product.name, product.price];
       const conn = await Client.connect();
       const result = await conn.query(sql, values);
       conn.release();
@@ -49,7 +66,12 @@ export class ProductStore {
     }
   }
 
-  async delete(id: number) {
+  /**
+   * Delete a product by id
+   * @param id
+   * @returns {Promise<void>}
+   */
+  async delete(id: number): Promise<void> {
     if (!id) throw new Error('id is required');
     try {
       const sql = 'DELETE FROM products WHERE id=($1)';
@@ -61,6 +83,10 @@ export class ProductStore {
     }
   }
 
+  /**
+   * Update a product
+   * @param {Product} mw
+   */
   async update(mw: Product): Promise<Product> {
     if (!mw.id) throw new Error('id is required');
     if (!mw.name) throw new Error('name is required');

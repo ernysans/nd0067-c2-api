@@ -80,6 +80,12 @@ describe('OrderProduct Model', () => {
     const result = await store.index();
     expect(result).toContain(item);
   });
+  it('index method should return a list of products for a specific order', async () => {
+    const result = await store.index(item.order_id);
+    const filtered = result.filter((i) => i.order_id !== item.order_id);
+    expect(result).toContain(item);
+    expect(filtered).toEqual([]);
+  });
 
   it('show method should return the correct order product', async () => {
     const result = await store.show(item.id);

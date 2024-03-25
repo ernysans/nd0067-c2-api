@@ -1,4 +1,3 @@
-import {Product} from "./product";
 import Client from '../database';
 
 export enum OrderStatus {
@@ -6,14 +5,14 @@ export enum OrderStatus {
   Complete = 'complete',
 }
 
-export type Order = {
+export interface Order {
   id?: number;
   user_id: number;
   status: OrderStatus;
 }
 
 /**
- * OrderStore
+ * OrderStore is a class with methods to access the orders table in the database.
  */
 export class OrderStore {
   /**
@@ -25,26 +24,6 @@ export class OrderStore {
       const conn = await Client.connect();
       let sql = 'SELECT * FROM orders';
       const result = await conn.query(sql);
-      conn.release();
-      return result.rows;
-    } catch (err) {
-      throw new Error(`Could not get orders. Error: ${err}`);
-    }
-  }
-
-  /**
-   * Get all the products in the order_products table that have the order_id
-   * @param id
-   * @returns Product[]
-   */
-  async products(id: number): Promise<Product[]> {
-    try {
-      const conn = await Client.connect();
-      /// Get all the products in the order_products table that have the order_id
-      // const sql = 'SELECT * FROM products p JOIN order_products op ON p.id = op.product_id WHERE op.order_id=($1)';
-      // use WHERE IN instead of JOIN
-      const sql = 'SELECT * FROM products WHERE id IN (SELECT product_id FROM order_products WHERE order_id=($1))';
-      const result = await conn.query(sql, [id]);
       conn.release();
       return result.rows;
     } catch (err) {
@@ -95,9 +74,9 @@ export class OrderStore {
   /**
    * Delete an order by id
    * @param id
-   * @returns void
+   * @returns {Promise<void>}
    */
-  async delete(id: number) {
+  async delete(id: number): Promise<void> {
     if (!id) throw new Error('id is required');
     try {
       const conn = await Client.connect();

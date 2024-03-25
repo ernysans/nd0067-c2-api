@@ -1,10 +1,12 @@
 import express, {NextFunction, Request, Response} from "express";
 import {Order, OrderStore} from "../models/order";
 import {userFromToken, verifyAuthToken} from "../middleware";
+import {OrderProductStore} from "../models/order_product";
 
 const router = express.Router()
 
 const store = new OrderStore();
+const orderProductStore = new OrderProductStore();
 
 const index = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -16,7 +18,7 @@ const index = async (req: Request, res: Response, next: NextFunction) => {
 };
 const orderProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const results = await store.products(parseInt(req.params.id));
+    const results = await orderProductStore.index(parseInt(req.params.id));
     res.json(results);
   } catch (error) {
     next(error);

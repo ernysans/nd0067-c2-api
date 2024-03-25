@@ -57,7 +57,7 @@ describe('User Model', () => {
     expect(result).toBeDefined();
     expect(result).toEqual(item);
   });
-  it('authenticate method should return null if password is incorrect', async () => {
+  it('authenticate method should fail if password is incorrect', async () => {
     const result = await store.authenticate(item.id, 'wrongpassword');
     expect(result).toBeNull();
   });

@@ -1,18 +1,26 @@
 import Client from '../database';
 
-export type OrderProduct = {
+export interface OrderProduct {
   id?: number;
   order_id: number;
   product_id: number;
   quantity: number;
 }
 
-
+/**
+ * OrderProductStore is a class with methods to access the order_products table in the database.
+ */
 export class OrderProductStore {
-  async index(): Promise<OrderProduct[]> {
+  /**
+   * Get all order_products
+   * @param order
+   * @returns {Promise<OrderProduct[]>}
+   */
+  async index(order?: number): Promise<OrderProduct[]> {
     try {
       const conn = await Client.connect();
-      const sql = 'SELECT * FROM order_products';
+      let sql = 'SELECT * FROM order_products';
+      if (order) sql += ` WHERE order_id=${order}`;
       const result = await conn.query(sql);
       conn.release();
       return result.rows;
@@ -21,6 +29,11 @@ export class OrderProductStore {
     }
   }
 
+  /**
+   * Get a order_product by id
+   * @param id
+   * @returns {Promise<OrderProduct>}
+   */
   async show(id: number): Promise<OrderProduct> {
     if (!id) throw new Error('id is required');
     try {
@@ -36,13 +49,18 @@ export class OrderProductStore {
     }
   }
 
-  async create(o: OrderProduct): Promise<OrderProduct> {
-    if (!o.order_id) throw new Error('order_id is required');
-    if (!o.product_id) throw new Error('product_id is required');
-    if (!o.quantity) throw new Error('quantity is required');
+  /**
+   * Create a new order_product
+   * @param {OrderProduct} orderProduct
+   * @returns {Promise<OrderProduct>}
+   */
+  async create(orderProduct: OrderProduct): Promise<OrderProduct> {
+    if (!orderProduct.order_id) throw new Error('order_id is required');
+    if (!orderProduct.product_id) throw new Error('product_id is required');
+    if (!orderProduct.quantity) throw new Error('quantity is required');
     try {
       const sql = 'INSERT INTO order_products (order_id, product_id, quantity) VALUES($1, $2, $3) RETURNING *';
-      const values: any[] = [o.order_id, o.product_id, o.quantity];
+      const values: any[] = [orderProduct.order_id, orderProduct.product_id, orderProduct.quantity];
       const conn = await Client.connect();
       const result = await conn.query(sql, values);
       conn.release();
@@ -52,7 +70,12 @@ export class OrderProductStore {
     }
   }
 
-  async delete(id: number) {
+  /**
+   * Delete a order_product by id
+   * @param id
+   * @returns {Promise<void>}
+   */
+  async delete(id: number): Promise<void> {
     if (!id) throw new Error('id is required');
     try {
       const conn = await Client.connect();
@@ -64,22 +87,26 @@ export class OrderProductStore {
     }
   }
 
-  async update(o: OrderProduct): Promise<OrderProduct> {
-    if (!o.id) throw new Error('id is required');
-    if (!o.order_id) throw new Error('order_id is required');
-    if (!o.product_id) throw new Error('product_id is required');
-    if (!o.quantity) throw new Error('quantity is required');
+  /**
+   * Update a order_product
+   * @param {OrderProduct} orderProduct
+   */
+  async update(orderProduct: OrderProduct): Promise<OrderProduct> {
+    if (!orderProduct.id) throw new Error('id is required');
+    if (!orderProduct.order_id) throw new Error('order_id is required');
+    if (!orderProduct.product_id) throw new Error('product_id is required');
+    if (!orderProduct.quantity) throw new Error('quantity is required');
     try {
       const sql = 'UPDATE order_products SET order_id=($1), product_id=($2), quantity=($3) WHERE id=($4) RETURNING *';
-      const values: any[] = [o.order_id, o.product_id, o.quantity, o.id];
+      const values: any[] = [orderProduct.order_id, orderProduct.product_id, orderProduct.quantity, orderProduct.id];
       const conn = await Client.connect();
       const result = await conn.query(sql, values);
       conn.release();
       const item = result.rows[0] as OrderProduct;
-      if (!item) throw new Error(`Could not find ${o.id}`);
+      if (!item) throw new Error(`Could not find ${orderProduct.id}`);
       return item;
     } catch (err) {
-      throw new Error(`Could not update order_product ${o.id}. Error: ${err}`);
+      throw new Error(`Could not update order_product ${orderProduct.id}. Error: ${err}`);
     }
   }
 }

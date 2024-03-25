@@ -1,17 +1,21 @@
 import Client from '../database';
 import bcrypt from 'bcrypt';
 
-export type User = {
+export interface User {
   id?: number;
   first_name?: string;
   last_name?: string;
   password?: string;
-};
+}
+
+
+// SALT_ROUNDS is the number of rounds to use to generate the salt
 const saltRounds = process.env.SALT_ROUNDS;
+// BCRYPT_PASSWORD is a pepper to add to the password before hashing
 const pepper = process.env.BCRYPT_PASSWORD;
 
 /**
- * UserStore class
+ * UserStore is a class with methods to access the users table in the database.
  */
 export class UserStore {
   /**
@@ -30,6 +34,11 @@ export class UserStore {
     }
   }
 
+  /**
+   * Show a user by id
+   * @param id
+   * @returns User
+   */
   async show(id: number): Promise<User> {
     if (!id) throw new Error('id is required');
     try {
@@ -45,6 +54,11 @@ export class UserStore {
     }
   }
 
+  /**
+   * Create a new user
+   * @param {User} u
+   * @returns User
+   */
   async create(u: User): Promise<User> {
     if (!u.password) throw new Error('password is required');
     if (!u.first_name) throw new Error('first_name is required');
@@ -66,7 +80,12 @@ export class UserStore {
     }
   }
 
-  async delete(id: number) {
+  /**
+   * Delete a user by id
+   * @param {number} id
+   * @returns void
+   */
+  async delete(id: number): Promise<void> {
     if (!id) throw new Error('id is required');
     try {
       const conn = await Client.connect();
@@ -78,6 +97,11 @@ export class UserStore {
     }
   }
 
+  /**
+   * Update a user
+   * @param {User} u
+   * @returns {Promise<User>}
+   */
   async update(u: User): Promise<User> {
     if (!u.id) throw new Error('id is required');
     if (!u.first_name) throw new Error('first_name is required');
@@ -96,6 +120,12 @@ export class UserStore {
     }
   }
 
+  /**
+   * Authenticate a user
+   * @param {number} id
+   * @param {string} password
+   * @returns {Promise<User | null>}
+   */
   async authenticate(id: number, password: string): Promise<User | null> {
     if (!password) throw new Error('password is required');
     const conn = await Client.connect();
@@ -107,7 +137,7 @@ export class UserStore {
       delete user.password;
       return user;
     } else {
-      throw new Error('password does not match');
+      return null;
     }
   }
 }
