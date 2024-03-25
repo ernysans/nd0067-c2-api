@@ -1,5 +1,5 @@
 export enum OrderStatus {
-  Active = 'active',
+  Open = 'open',
   Complete = 'complete',
 }
 

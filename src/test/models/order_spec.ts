@@ -5,7 +5,7 @@ const store = new OrderStore();
 describe('Order Model', () => {
   let item: Order = {
     user_id: null,
-    status: OrderStatus.Active,
+    status: OrderStatus.Open,
   };
   beforeAll(async () => {
     const userStore = new UserStore();
