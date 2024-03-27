@@ -1,7 +1,7 @@
 {
   "name": "storefront_backend",
   "version": "0.1.0",
-  "description": "",
+  "description": "API for an online storefront to showcase great product ideas.",
   "main": "dist/server.js",
   "scripts": {
     "jasmine": "jasmine",
@@ -19,7 +19,7 @@
     "migrate": "npm run compile && db-migrate reset && db-migrate up",
     "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
-  "author": "Udacity",
+  "author": "Erny Sans",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
