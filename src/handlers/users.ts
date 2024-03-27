@@ -28,14 +28,14 @@ const show = async (req: Request, res: Response, next: NextFunction) => {
 
 const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user: User = {
+    let user: User = {
       first_name: req.body.first_name,
       last_name: req.body.last_name,
       password: req.body.password,
     };
     let newUser = await store.create(user);
-    let token = jwt.sign({user: newUser}, process.env.TOKEN_SECRET);
-    res.json(token);
+    const token = jwt.sign({user: newUser}, process.env.TOKEN_SECRET);
+    res.json({token, ...newUser});
   } catch (err) {
     next(err);
   }
@@ -71,7 +71,7 @@ const authenticate = async (req: Request, res: Response, next: NextFunction) => 
       throw new Error('Authentication failed. Passwords did not match.');
     }
     let token = jwt.sign({user: user}, process.env.TOKEN_SECRET);
-    res.json(token);
+    res.json({token, ...user});
   } catch (err) {
     next(err);
   }
