@@ -2,7 +2,7 @@
   "name": "storefront_backend",
   "version": "0.1.0",
   "description": "API for an online storefront to showcase great product ideas.",
-  "main": "dist/server.js",
+  "main": "lib/server.js",
   "scripts": {
     "jasmine": "jasmine",
     "start": "node lib/server.js",
