@@ -52,12 +52,11 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-router.use(verifyAuthToken);
 router.get('/', index);
 router.get('/:id', show);
-router.post('/', create);
-router.delete('/:id', _delete);
-router.put('/:id', update);
+router.post('/', verifyAuthToken, create);
+router.delete('/:id', verifyAuthToken, _delete);
+router.put('/:id', verifyAuthToken, update);
 
 export default router;
 
