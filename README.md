@@ -1,5 +1,24 @@
 # Storefront Backend Project
 
+# Table of Contents
+1. [About the Project](#about-the-project)
+2. [How to Run the Project](#how-to-run-the-project)
+3. [Available Scripts](#available-scripts)
+4. [Security](#security)
+5. [Database Schema](#database-schema)
+    - [Users Table Schema](#users-table-schema)
+    - [Products Table Schema](#products-table-schema)
+    - [Orders Table Schema](#orders-table-schema)
+    - [Order Products Table Schema](#order-products-table-schema)
+6. [Database Triggers](#database-triggers)
+    - [Orders Table Triggers](#orders-table-triggers)
+    - [Order Products Table Triggers](#order-products-table-triggers)
+7. [API Endpoints](#api-endpoints)
+    - [Users API Endpoints](#users-api-endpoints)
+    - [Products API Endpoints](#products-api-endpoints)
+    - [Orders API Endpoints](#orders-api-endpoints)
+    - [Order Products API Endpoints](#order-products-api-endpoints)
+
 ## About the Project
 
 API for an online storefront to showcase great product ideas. Users can browse an index of all products, see the
@@ -72,6 +91,59 @@ Runs all tests with jasmine.
 
 Bearer Token is required for all endpoints explicitly marked as `token required`. The token is generated when a user is
 authenticated and is required to be passed in the header of the request.
+
+## Database Schema
+## Users Table Schema
+
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| id          | SERIAL    | PRIMARY KEY | Unique identifier for each user |
+| first_name  | VARCHAR(100) |             | First name of the user |
+| last_name   | VARCHAR(100) |             | Last name of the user |
+| password    | VARCHAR   |             | Encrypted password for the user |
+
+## Products Table Schema
+
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| id          | SERIAL    | PRIMARY KEY | Unique identifier for each product |
+| name        | VARCHAR(64) | NOT NULL | Name of the product |
+| price       | INTEGER   | NOT NULL | Price of the product |
+
+## Orders Table Schema
+
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| id          | SERIAL    | PRIMARY KEY | Unique identifier for each order |
+| status      | VARCHAR(15) | NOT NULL | Status of the order (e.g., 'open', 'complete') |
+| user_id     | INT       | REFERENCES users (id) ON DELETE CASCADE | Foreign key that references the `id` in the `users` table |
+
+## Order Products Table Schema
+
+| Column Name | Data Type | Constraints | Description |
+|-------------|-----------|-------------|-------------|
+| id          | SERIAL    | PRIMARY KEY | Unique identifier for each order product |
+| order_id    | INT       | REFERENCES orders(id) ON DELETE CASCADE | Foreign key that references the `id` in the `orders` table |
+| product_id  | INT       | REFERENCES products(id) ON DELETE CASCADE | Foreign key that references the `id` in the `products` table |
+| quantity    | INT       | NOT NULL | Quantity of the product in the order |
+
+## Database triggers
+
+### Orders Table Triggers
+
+1. `order_user_check_before_update`: This trigger is executed before an update on the `orders` table. It checks if the
+   user is trying to update an order that belongs to another user. If so, it raises an exception.
+2. `order_status_check_before_update`: This trigger is also executed before an update on the `orders` table. It checks
+   if the user is trying to change the order status from 'complete' to 'open'. If so, it raises an exception.
+
+### Order Products Table Triggers
+
+1. `order_status_check_before_insert`: This trigger is executed before an insert on the `order_products` table. It
+   checks if the order status is 'open'. If not, it raises an exception.
+2. `order_status_check_before_update`: This trigger is also executed before an update on the `order_products` table. It
+   checks if the order status is 'open'. If not, it raises an exception.
+3. `order_product_exists_check_before_insert`: This trigger is executed before an insert on the `order_products` table.
+   It checks if the order product already exists. If so, it raises an exception.
 
 ## API Endpoints
 
@@ -194,21 +266,3 @@ authenticated and is required to be passed in the header of the request.
   }
   ```
 - `DELETE /order_products/:id` - Delete a specific order product by its ID (token required)
-
-## Database triggers
-
-### `orders` table
-
-1. `order_user_check_before_update`: This trigger is executed before an update on the `orders` table. It checks if the
-   user is trying to update an order that belongs to another user. If so, it raises an exception.
-2. `order_status_check_before_update`: This trigger is also executed before an update on the `orders` table. It checks
-   if the user is trying to change the order status from 'complete' to 'open'. If so, it raises an exception.
-
-### `order_products` table
-
-1. `order_status_check_before_insert`: This trigger is executed before an insert on the `order_products` table. It
-   checks if the order status is 'open'. If not, it raises an exception.
-2. `order_status_check_before_update`: This trigger is also executed before an update on the `order_products` table. It
-   checks if the order status is 'open'. If not, it raises an exception.
-3. `order_product_exists_check_before_insert`: This trigger is executed before an insert on the `order_products` table.
-   It checks if the order product already exists. If so, it raises an exception.
